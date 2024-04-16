@@ -1,7 +1,6 @@
 // EDIT THIS FILE TO COMPLETE ASSIGNMENT QUESTION 1
-const { log } = require("console");
-const { chromium, test } = require("playwright");
-
+const { chromium } = require("playwright");
+const { writeToPath} = require("fast-csv");
 
 async function saveHackerNewsArticles() {
   // launch browser
@@ -11,14 +10,21 @@ async function saveHackerNewsArticles() {
 
   // go to Hacker News
   await page.goto("https://news.ycombinator.com");
-  //const list = 
-  for(const a of await page.locator(".titleline").all()) {
-    log('a', await a.textContent())
+  const listLenght = await page.locator(".titleline").all();
+  const masterArray = []
+  for(let i = 0; i<10; i++) {
+    masterArray.push({news: await listLenght[i].textContent()});
   }
-  //log("list", list);
+  writeToPath("./tenNews.csv", masterArray);
+  console.log("Done, tenNews.csv file has been created.");
+  process.exit();
 }
 
 (async () => {
-  await saveHackerNewsArticles();
+    try {
+        await saveHackerNewsArticles();
+        
+    } catch(err) {
+        console.log("Error:", err);
+    }
 })();
-
